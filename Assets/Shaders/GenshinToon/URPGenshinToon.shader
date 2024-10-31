@@ -62,6 +62,10 @@ Shader "URPGenshinToon"
         _OutlineColor3("Outline Color 3", Color) = (0,0,0,1)
         _OutlineColor4("Outline Color 4", Color) = (0,0,0,1)
         _OutlineColor5("Outline Color 5", Color) = (0,0,0,1)
+
+        [Header(Expand)]
+        _ExpandWidth("Expand Width", Float) = 0.01
+        _ExpandColor("Expand Color", Color) = (1,0,0,1)
     }
 
     Subshader
@@ -187,6 +191,49 @@ Shader "URPGenshinToon"
 
         Pass
         {
+            Name "NormalExpand"
+            Tags {"LightMode" = "SRPDefaultUnlit"} // 或者使用其他适合的LightMode
+
+            Cull Front // 只渲染背面
+            ZWrite Off  // 根据需要设置深度写入
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "ToonInput.hlsl"
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float3 normalOS : NORMAL;
+            };
+
+            struct Varyings
+            {
+                float4 positionHCS : SV_POSITION;
+            };
+
+
+            Varyings vert(Attributes input)
+            {
+                Varyings output;
+                float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
+                float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
+                // 沿法线方向扩展顶点
+                positionWS += normalWS * 0.015;
+                output.positionHCS = TransformWorldToHClip(positionWS);
+                return output;
+            }
+
+            half4 frag(Varyings input) : SV_Target
+            {
+                return _ExpandColor;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
             Name "Outline"
             Tags {"LightMode" = "SRPDefaultUnlit"}
 
@@ -202,5 +249,6 @@ Shader "URPGenshinToon"
 
             ENDHLSL
         }
+        
     }
 }

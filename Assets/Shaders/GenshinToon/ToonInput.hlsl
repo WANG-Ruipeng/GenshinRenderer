@@ -40,6 +40,9 @@ CBUFFER_START(UnityPerMaterial)
     half4   _OutlineColor3;
     half4   _OutlineColor4;
     half4   _OutlineColor5;
+
+    float _ExpandWidth;
+    float4 _ExpandColor;
 CBUFFER_END
 
 TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
