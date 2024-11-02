@@ -64,8 +64,8 @@ Shader "URPGenshinToon"
         _OutlineColor5("Outline Color 5", Color) = (0,0,0,1)
 
         [Header(Expand)]
-        _ExpandWidth("Expand Width", Float) = 0.01
-        _ExpandColor("Expand Color", Color) = (1,0,0,1)
+        _ExpandWidth("Expand Width", Float) = 0.15
+        _ExpandColor("Expand Color", Color) = (0,0.8,0,1)
     }
 
     Subshader
@@ -189,7 +189,7 @@ Shader "URPGenshinToon"
             ENDHLSL
         }
 
-        Pass
+                Pass
         {
             Name "NormalExpand"
             Tags {"LightMode" = "SRPDefaultUnlit"} // 或者使用其他适合的LightMode
@@ -219,8 +219,7 @@ Shader "URPGenshinToon"
                 Varyings output;
                 float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                // 沿法线方向扩展顶点
-                positionWS += normalWS * 0.015;
+                positionWS += normalWS * _ExpandWidth;
                 output.positionHCS = TransformWorldToHClip(positionWS);
                 return output;
             }
@@ -250,5 +249,7 @@ Shader "URPGenshinToon"
             ENDHLSL
         }
         
+        
+
     }
 }

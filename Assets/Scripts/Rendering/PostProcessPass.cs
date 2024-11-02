@@ -13,6 +13,8 @@ namespace Nahida.Rendering
 
         private RTHandle[] _bloomBufferB;
 
+        private RTHandle _cameraDepthTexture;
+
         private bool _useBloom;
 
         private int _iterations;
@@ -28,6 +30,8 @@ namespace Nahida.Rendering
 
             base.profilingSampler = new ProfilingSampler(nameof(PostProcessPass));
             base.renderPassEvent = renderPassEvent;
+
+            ConfigureInput(ScriptableRenderPassInput.Depth);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
@@ -96,6 +100,10 @@ namespace Nahida.Rendering
                 _material.SetColor("_BloomColor", bloomVolume.color.value);
                 _material.SetFloat("_BlurRadius", bloomVolume.blurRadius.value * _downSampleScale * screenFactor);
             }
+
+            // 获取深度纹理
+            _cameraDepthTexture = renderingData.cameraData.renderer.cameraDepthTargetHandle;
+            _material.SetTexture("_CameraDepthTexture", _cameraDepthTexture);
         }
 
         private void Render(CommandBuffer commandBuffer, ref RenderingData renderingData)
