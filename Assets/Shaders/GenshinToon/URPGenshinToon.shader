@@ -192,7 +192,7 @@ Shader "URPGenshinToon"
                 Pass
         {
             Name "NormalExpand"
-            Tags {"LightMode" = "SRPDefaultUnlit"} // 或者使用其他适合的LightMode
+            Tags {"LightMode" = "UniversalForwardOnly"} // 或者使用其他适合的LightMode
 
             Cull Front // 只渲染背面
             ZWrite Off  // 根据需要设置深度写入
